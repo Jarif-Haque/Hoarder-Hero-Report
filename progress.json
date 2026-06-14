@@ -1,0 +1,177 @@
+[
+    {
+        "id": "1.1",
+        "phase": 1,
+        "title": "Core Mechanics Development",
+        "desc": "Setting up basic VR grab mechanics, hand colliders, and throwing physics.",
+        "status": "completed"
+    },
+    {
+        "id": "1.2",
+        "phase": 1,
+        "title": "VR Locomotion & Comfort Configurations",
+        "desc": "Implementing comfortable teleportation controls and field-of-view comfort screens.",
+        "status": "completed"
+    },
+    {
+        "id": "1.3",
+        "phase": 1,
+        "title": "Trash Disposal Systems",
+        "desc": "Creating trash bins and bag systems that process, delete, and score thrown clutter.",
+        "status": "completed"
+    },
+    {
+        "id": "1.4",
+        "phase": 1,
+        "title": "First Playable Room (Bedroom)",
+        "desc": "Assembling a small greybox bedroom to test interactive item scaling in VR.",
+        "status": "completed"
+    },
+    {
+        "id": "1.5",
+        "phase": 1,
+        "title": "Player Equipment Belt Sockets",
+        "desc": "Rigging a virtual utility belt to store player sponges, rollers, and tool assets.",
+        "status": "completed"
+    },
+    {
+        "id": "1.6",
+        "phase": 1,
+        "title": "Interactive Menu Tablet",
+        "desc": "Creating an elegant wearable computer wrist-watch showing current progress.",
+        "status": "completed"
+    },
+    {
+        "id": "2.1",
+        "phase": 2,
+        "title": "Interactive Level 1 Construction",
+        "desc": "Building a realistic 4-room house layout (Kitchen, Living Room, Bedroom, Bathroom).",
+        "status": "active"
+    },
+    {
+        "id": "2.2",
+        "phase": 2,
+        "title": "Wall Cleaning & Sponge Scrubbing System",
+        "desc": "Enabling physical sponge wipes to erase grimy stains and mold from walls in real-time.",
+        "status": "pending"
+    },
+    {
+        "id": "2.3",
+        "phase": 2,
+        "title": "Structural Repair Systems (Hammer tool)",
+        "desc": "Developing mechanics to repair broken chair legs and cabinets by hammering them.",
+        "status": "pending"
+    },
+    {
+        "id": "2.4",
+        "phase": 2,
+        "title": "Wall Painting Mechanics",
+        "desc": "Implementing paint rollers that change wall colors dynamically with clean brushstrokes.",
+        "status": "pending"
+    },
+    {
+        "id": "2.5",
+        "phase": 2,
+        "title": "Furnishing & Decoration catalogs",
+        "desc": "Creating placement holograms to purchase and position sofas, lamps, and plants.",
+        "status": "pending"
+    },
+    {
+        "id": "2.6",
+        "phase": 2,
+        "title": "Progression & Cash Reward Managers",
+        "desc": "Implementing career contract progression, tracking levels cleared, and assigning cash.",
+        "status": "pending"
+    },
+    {
+        "id": "2.7",
+        "phase": 2,
+        "title": "Interactive Shop System",
+        "desc": "Building an office laptop menu to buy upgraded sponges, rollers, and tool sizes.",
+        "status": "pending"
+    },
+    {
+        "id": "3.1",
+        "phase": 3,
+        "title": "Level 2 Assembly (Medium 2-Story House)",
+        "desc": "Building a suburban house featuring multiple floors and advanced large clutter.",
+        "status": "pending"
+    },
+    {
+        "id": "3.2",
+        "phase": 3,
+        "title": "Level 3 Assembly (Large Hoarder Estate)",
+        "desc": "Assembling a severely neglected estate with complex hazardous materials to clear.",
+        "status": "pending"
+    },
+    {
+        "id": "3.3",
+        "phase": 3,
+        "title": "Multiplayer Co-Op Core Mechanics",
+        "desc": "Enabling multiplayer rooms where developers/players clean homes in co-op.",
+        "status": "pending"
+    },
+    {
+        "id": "3.4",
+        "phase": 3,
+        "title": "Co-Op Progress Sync Manager",
+        "desc": "Networking paint, repairs, and trash disposal so actions sync perfectly across players.",
+        "status": "pending"
+    },
+    {
+        "id": "3.5",
+        "phase": 3,
+        "title": "Sound Effects & Atmospheric Music",
+        "desc": "Adding scrubbing sounds, trash rustling, cash registry rings, and cozy clean up tunes.",
+        "status": "pending"
+    },
+    {
+        "id": "3.6",
+        "phase": 3,
+        "title": "VR Haptic Vibrations",
+        "desc": "Programming soft controller vibration rumbles on cleaning and heavy kicks on hammer strikes.",
+        "status": "pending"
+    },
+    {
+        "id": "3.7",
+        "phase": 3,
+        "title": "Contract Challenges Mode",
+        "desc": "Implementing optional timed challenges with bonus payouts and performance stars.",
+        "status": "pending"
+    },
+    {
+        "id": "4.1",
+        "phase": 4,
+        "title": "Quest Standalone Performance Profiles",
+        "desc": "Polishing frame rendering to ensure butter-smooth gameplay on Quest 2 and 3.",
+        "status": "pending"
+    },
+    {
+        "id": "4.2",
+        "phase": 4,
+        "title": "Collision & Physics Thread Optimization",
+        "desc": "Optimizing code execution to prevent lag when massive amounts of trash are shifted.",
+        "status": "pending"
+    },
+    {
+        "id": "4.3",
+        "phase": 4,
+        "title": "Quality Assurance & Bug Sweeping",
+        "desc": "Performing intensive playtesting to clean bugs and resolve locomotion edge-cases.",
+        "status": "pending"
+    },
+    {
+        "id": "4.4",
+        "phase": 4,
+        "title": "VR Comfort Configurations",
+        "desc": "Setting up user configuration settings for left-handed controls, vignettes, and smooth turns.",
+        "status": "pending"
+    },
+    {
+        "id": "4.5",
+        "phase": 4,
+        "title": "Final Build Deployment & Delivery",
+        "desc": "Packaging optimized Quest builds (.apk) and compiling complete delivery source codes.",
+        "status": "pending"
+    }
+]
