@@ -25,14 +25,14 @@
         "phase": 1,
         "title": "First Playable Room (Bedroom)",
         "desc": "Assembling a small greybox bedroom to test interactive item scaling in VR.",
-        "status": "completed"
+        "status": "pending"
     },
     {
         "id": "1.5",
         "phase": 1,
         "title": "Player Equipment Belt Sockets",
         "desc": "Rigging a virtual utility belt to store player sponges, rollers, and tool assets.",
-        "status": "completed"
+        "status": "pending"
     },
     {
         "id": "1.6",
