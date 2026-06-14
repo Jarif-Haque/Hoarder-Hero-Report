@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOARDER HERO — Project Progress Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0a0f1d;
+            --bg-secondary: #131a30;
+            --bg-card: #1b2440;
+            --accent-green: #00f5d4;
+            --accent-blue: #00b4d8;
+            --accent-purple: #9b5de5;
+            --text-main: #f8f9fa;
+            --text-muted: #94a3b8;
+            --status-completed: #00f5d4;
+            --status-active: #ff5400;
+            --status-pending: #475569;
+            --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+            padding-bottom: 6rem; /* space for admin bar */
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Clean Elegant Header */
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #0d1326 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border-top: 4px solid var(--accent-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(0, 245, 212, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .title-area h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+        }
+
+        .title-area h1 span {
+            color: var(--accent-green);
+            text-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
+        }
+
+        .title-area p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        .header-badges-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .client-badge {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.8rem 1.6rem;
+            border-radius: 14px;
+            text-align: right;
+        }
+
+        .client-badge .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-green);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .client-badge .val {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* Sleek Button for Developer Login */
+        .dev-login-btn {
+            background: linear-gradient(135deg, rgba(155, 93, 229, 0.1) 0%, rgba(0, 180, 216, 0.1) 100%);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            color: var(--accent-blue);
+            padding: 0.8rem 1.4rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .dev-login-btn:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 245, 212, 0.08);
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Database sync loading status label */
+        .db-status-bar {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .db-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            display: inline-block;
+        }
+
+        .db-pulse.loading {
+            background-color: #ffb703;
+            animation: db-pulse-anim 1s infinite alternate;
+        }
+
+        @keyframes db-pulse-anim {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.3); opacity: 1; }
+        }
+
+        /* Grid Cards */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2.2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 240px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 245, 212, 0.15);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Circular Progress styling */
+        .progress-circle-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .svg-circle {
+            position: relative;
+            width: 110px;
+            height: 110px;
+        }
+
+        .svg-circle svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .svg-circle circle {
+            fill: none;
+            stroke-width: 10;
+        }
+
+        .circle-bg {
+            stroke: rgba(255, 255, 255, 0.04);
+        }
+
+        .circle-progress {
+            stroke: var(--accent-green);
+            stroke-dasharray: 314;
+            stroke-dashoffset: 314;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+            filter: drop-shadow(0 0 4px var(--accent-green));
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .progress-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .progress-meta .pct-label {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .progress-meta .sub-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Active Focus styling */
+        .active-task-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .active-badge {
+            background-color: rgba(255, 84, 0, 0.1);
+            border: 1px solid rgba(255, 84, 0, 0.25);
+            color: var(--status-active);
+            align-self: flex-start;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .active-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--status-active);
+            border-radius: 50%;
+            animation: pulse-ring 1.8s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(255, 84, 0, 0.6); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 84, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 84, 0, 0); }
+        }
+
+        .active-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+            line-height: 1.35;
+        }
+
+        .active-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Timeline Tracker */
+        .timeline-section {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-wrapper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .timeline-bar {
+            position: absolute;
+            top: 24px;
+            left: 5%;
+            width: 90%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            z-index: 1;
+        }
+
+        .timeline-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .timeline-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 20%;
+            min-width: 150px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .timeline-node-dot {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--bg-secondary);
+            border: 3px solid var(--status-pending);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.8rem;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+
+        .timeline-node.completed .timeline-node-dot {
+            border-color: var(--status-completed);
+            background-color: var(--status-completed);
+            color: #0b132b;
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
+        }
+
+        .timeline-node.active .timeline-node-dot {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
+            animation: pulse-blue 2s infinite;
+        }
+
+        @keyframes pulse-blue {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .timeline-node-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.2rem;
+        }
+
+        .timeline-node-duration {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .timeline-node-pct {
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+
+        /* Checklist / Tabs */
+        .checklist-section {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.8rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-green);
+            background-color: rgba(0, 245, 212, 0.08);
+            box-shadow: inset 0 0 1px rgba(0, 245, 212, 0.2);
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.3rem;
+            border-radius: 14px;
+            background-color: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            transition: var(--transition);
+        }
+
+        .task-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            flex: 1;
+        }
+
+        .task-indicator {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .task-indicator.completed {
+            background-color: rgba(0, 245, 212, 0.1);
+            color: var(--status-completed);
+            border: 1.5px solid var(--status-completed);
+        }
+
+        .task-indicator.active {
+            background-color: rgba(255, 84, 0, 0.1);
+            color: var(--status-active);
+            border: 1.5px solid var(--status-active);
+        }
+
+        .task-indicator.pending {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .task-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-id-badge {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 0.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-label {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .task-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .task-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .task-badge.completed {
+            background-color: rgba(0, 245, 212, 0.08);
+            border: 1px solid rgba(0, 245, 212, 0.15);
+            color: var(--status-completed);
+        }
+
+        .task-badge.active {
+            background-color: rgba(255, 84, 0, 0.08);
+            border: 1px solid rgba(255, 84, 0, 0.15);
+            color: var(--status-active);
+        }
+
+        .task-badge.pending {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-muted);
+        }
+
+        /* Interactive Select Dropdown for Dev Mode */
+        .admin-select {
+            background-color: #1b2440;
+            color: #ffffff;
+            border: 1px solid var(--accent-blue);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .admin-select:hover {
+            border-color: var(--accent-green);
+        }
+
+        /* Fixed Bottom Action Floating Bar for Admin */
+        .admin-floating-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #7209b7 0%, #111a36 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-top: 2px solid var(--accent-green);
+        }
+
+        .admin-bar-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-indicator-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .admin-bar-text {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .admin-btn {
+            background-color: var(--accent-green);
+            color: #0b132b;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 212, 0.4);
+        }
+
+        .admin-reset-btn {
+            background-color: transparent;
+            color: #ff5400;
+            border: 1px solid rgba(255, 84, 0, 0.3);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .admin-reset-btn:hover {
+            background-color: rgba(255, 84, 0, 0.1);
+            color: #ffffff;
+            border-color: #ff5400;
+        }
+
+        .admin-logout-btn {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .admin-logout-btn:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.8rem;
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .header-badges-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            .client-badge {
+                width: 100%;
+                text-align: center;
+            }
+            .dev-login-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .timeline-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-left: 2rem;
+            }
+            .timeline-bar {
+                top: 0;
+                left: 24px;
+                width: 4px;
+                height: 100%;
+            }
+            .timeline-node {
+                flex-direction: row;
+                text-align: left;
+                width: 100%;
+                gap: 1.5rem;
+            }
+            .timeline-node-dot {
+                margin-bottom: 0;
+            }
+            .admin-floating-bar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- MAIN HEADER -->
+    <header>
+        <div class="title-area">
+            <h1>HOARDER <span>HERO</span></h1>
+            <p>Interactive Client Development Roadmap Tracker</p>
+        </div>
+        <div class="header-badges-container">
+            <div class="client-badge">
+                <span class="label">Project Client</span>
+                <span class="val">toiahgordon</span>
+            </div>
+            <!-- PROMINENT SLEEK DEV PORTAL BUTTON -->
+            <button class="dev-login-btn" id="devLoginButton" onclick="triggerAdminLogin()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Developer Portal
+            </button>
+        </div>
+    </header>
+
+    <!-- Database Sync Status Indicator -->
+    <div class="db-status-bar">
+        <div class="db-pulse loading" id="dbPulse"></div>
+        <span id="dbStatusText">Initializing database synchronization...</span>
+    </div>
+
+    <!-- STATISTICS OVERVIEW GRID -->
+    <div class="grid-stats">
+        
+        <!-- Progress Circular Card -->
+        <div class="card">
+            <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/></svg>
+                Total Completion Progress
+            </div>
+            <div class="progress-circle-container">
+                <div class="svg-circle">
+                    <svg>
+                        <circle class="circle-bg" cx="55" cy="55" r="45"></circle>
+                        <circle class="circle-progress" id="mainProgressCircle" cx="55" cy="55" r="45"></circle>
+                    </svg>
+                    <div class="circle-text" id="mainProgressText">0%</div>
+                </div>
+                <div class="progress-meta">
+                    <div class="pct-label" id="ratioText">0 of 0 Completed</div>
+                    <div class="sub-label">Milestones dynamically computed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Focus Card -->
+        <div class="card">
+            <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                Current Development Sprint
+            </div>
+            <div class="active-task-container">
+                <div>
+                    <div class="active-badge">
+                        <div class="pulse-dot"></div>
+                        ACTIVE SPRINT
+                    </div>
+                    <div class="active-title" id="activeTaskTitle">No active task selected</div>
+                    <div class="active-desc" id="activeTaskDesc">Select or configure the current developer sprint in the Script tag below.</div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.6rem;">
+                    Working in: <span id="activeTaskPhase" style="color: var(--accent-blue);">Phase X</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DEVELOPMENT TIMELINE SECTION -->
+    <div class="timeline-section">
+        <div class="timeline-title">
+            <span>Project Phase Progression</span>
+            <span style="color: var(--accent-green); font-size: 1rem; font-weight: 700;" id="weeksElapsedText">Week 0 of 14</span>
+        </div>
+        
+        <div class="timeline-wrapper">
+            <div class="timeline-bar">
+                <div class="timeline-bar-fill" id="timelineBarFill"></div>
+            </div>
+            
+            <div class="timeline-node" id="node-1">
+                <div class="timeline-node-dot">01</div>
+                <div class="timeline-node-title">Phase 1: Planning & Core Prototype</div>
+                <div class="timeline-node-duration">Timeline: 3 Weeks</div>
+                <div class="timeline-node-pct" id="node-1-pct">0%</div>
+            </div>
+
+            <div class="timeline-node" id="node-2">
+                <div class="timeline-node-dot">02</div>
+                <div class="timeline-node-title">Phase 2: First Full Level & Core Systems</div>
+                <div class="timeline-node-duration">Timeline: 5 Weeks</div>
+                <div class="timeline-node-pct" id="node-2-pct">0%</div>
+            </div>
+
+            <div class="timeline-node" id="node-3">
+                <div class="timeline-node-dot">03</div>
+                <div class="timeline-node-title">Phase 3: Polish, More Levels & Features</div>
+                <div class="timeline-node-duration">Timeline: 4 Weeks</div>
+                <div class="timeline-node-pct" id="node-3-pct">0%</div>
+            </div>
+
+            <div class="timeline-node" id="node-4">
+                <div class="timeline-node-dot">04</div>
+                <div class="timeline-node-title">Phase 4: Testing & Final Delivery</div>
+                <div class="timeline-node-duration">Timeline: 2 Weeks</div>
+                <div class="timeline-node-pct" id="node-4-pct">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAILED SPRINT TASKS -->
+    <div class="checklist-section">
+        <div class="timeline-title">Roadmap Checklist Details</div>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchPhase(1)">Phase 1 (W1-W3)</button>
+            <button class="tab-btn" onclick="switchPhase(2)">Phase 2 (W4-W8)</button>
+            <button class="tab-btn" onclick="switchPhase(3)">Phase 3 (W9-W12)</button>
+            <button class="tab-btn" onclick="switchPhase(4)">Phase 4 (W13-W14)</button>
+        </div>
+
+        <div class="task-list" id="taskListContainer">
+            <!-- Programmatic compilation will populate tasks here -->
+        </div>
+    </div>
+
+</div>
+
+<!-- ADMIN DOCK CONTAINER -->
+<div id="adminDock" style="display: none;">
+    <div class="admin-floating-bar">
+        <div class="admin-bar-info">
+            <div class="admin-indicator-dot"></div>
+            <div class="admin-bar-text" id="adminBarStatus">DEVELOPER MODE ACTIVE  |  Visual Progress Manager</div>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button class="admin-reset-btn" onclick="resetToCodeDefaults()">Reset Database Defaults</button>
+            <button class="admin-btn" onclick="exportUpdatedCode()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export index.html (Backup)
+            </button>
+            <button class="admin-logout-btn" onclick="logoutAdmin()">Logout</button>
+        </div>
+    </div>
+</div>
+
+<!-- DATA COMPILING JAVASCRIPT BLOCK -->
+<script id="dashboardScript">
+    // =========================================================================
+    // DYNAMIC TASK DATA MATRIX (Fallback Defaults if database is empty)
+    // =========================================================================
+    let tasksData = [
+        {
+            id: "1.1",
+            phase: 1,
+            title: "Core Mechanics Development",
+            desc: "Setting up basic VR grab mechanics, hand colliders, and throwing physics.",
+            status: "completed"
+        },
+        {
+            id: "1.2",
+            phase: 1,
+            title: "VR Locomotion & Comfort Configurations",
+            desc: "Implementing comfortable teleportation controls and field-of-view comfort screens.",
+            status: "completed"
+        },
+        {
+            id: "1.3",
+            phase: 1,
+            title: "Trash Disposal Systems",
+            desc: "Creating trash bins and bag systems that process, delete, and score thrown clutter.",
+            status: "completed"
+        },
+        {
+            id: "1.4",
+            phase: 1,
+            title: "First Playable Room (Bedroom)",
+            desc: "Assembling a small greybox bedroom to test interactive item scaling in VR.",
+            status: "completed"
+        },
+        {
+            id: "1.5",
+            phase: 1,
+            title: "Player Equipment Belt Sockets",
+            desc: "Rigging a virtual utility belt to store player sponges, rollers, and tool assets.",
+            status: "completed"
+        },
+        {
+            id: "1.6",
+            phase: 1,
+            title: "Interactive Menu Tablet",
+            desc: "Creating an elegant wearable computer wrist-watch showing current progress.",
+            status: "completed"
+        },
+        {
+            id: "2.1",
+            phase: 2,
+            title: "Interactive Level 1 Construction",
+            desc: "Building a realistic 4-room house layout (Kitchen, Living Room, Bedroom, Bathroom).",
+            status: "active"
+        },
+        {
+            id: "2.2",
+            phase: 2,
+            title: "Wall Cleaning & Sponge Scrubbing System",
+            desc: "Enabling physical sponge wipes to erase grimy stains and mold from walls in real-time.",
+            status: "pending"
+        },
+        {
+            id: "2.3",
+            phase: 2,
+            title: "Structural Repair Systems (Hammer tool)",
+            desc: "Developing mechanics to repair broken chair legs and cabinets by hammering them.",
+            status: "pending"
+        },
+        {
+            id: "2.4",
+            phase: 2,
+            title: "Wall Painting Mechanics",
+            desc: "Implementing paint rollers that change wall colors dynamically with clean brushstrokes.",
+            status: "pending"
+        },
+        {
+            id: "2.5",
+            phase: 2,
+            title: "Furnishing & Decoration catalogs",
+            desc: "Creating placement holograms to purchase and position sofas, lamps, and plants.",
+            status: "pending"
+        },
+        {
+            id: "2.6",
+            phase: 2,
+            title: "Progression & Cash Reward Managers",
+            desc: "Implementing career contract progression, tracking levels cleared, and assigning cash.",
+            status: "pending"
+        },
+        {
+            id: "2.7",
+            phase: 2,
+            title: "Interactive Shop System",
+            desc: "Building an office laptop menu to buy upgraded sponges, rollers, and tool sizes.",
+            status: "pending"
+        },
+        {
+            id: "3.1",
+            phase: 3,
+            title: "Level 2 Assembly (Medium 2-Story House)",
+            desc: "Building a suburban house featuring multiple floors and advanced large clutter.",
+            status: "pending"
+        },
+        {
+            id: "3.2",
+            phase: 3,
+            title: "Level 3 Assembly (Large Hoarder Estate)",
+            desc: "Assembling a severely neglected estate with complex hazardous materials to clear.",
+            status: "pending"
+        },
+        {
+            id: "3.3",
+            phase: 3,
+            title: "Multiplayer Co-Op Core Mechanics",
+            desc: "Enabling multiplayer rooms where developers/players clean homes in co-op.",
+            status: "pending"
+        },
+        {
+            id: "3.4",
+            phase: 3,
+            title: "Co-Op Progress Sync Manager",
+            desc: "Networking paint, repairs, and trash disposal so actions sync perfectly across players.",
+            status: "pending"
+        },
+        {
+            id: "3.5",
+            phase: 3,
+            title: "Sound Effects & Atmospheric Music",
+            desc: "Adding scrubbing sounds, trash rustling, cash registry rings, and cozy clean up tunes.",
+            status: "pending"
+        },
+        {
+            id: "3.6",
+            phase: 3,
+            title: "VR Haptic Vibrations",
+            desc: "Programming soft controller vibration rumbles on cleaning and heavy kicks on hammer strikes.",
+            status: "pending"
+        },
+        {
+            id: "3.7",
+            phase: 3,
+            title: "Contract Challenges Mode",
+            desc: "Implementing optional timed challenges with bonus payouts and performance stars.",
+            status: "pending"
+        },
+        {
+            id: "4.1",
+            phase: 4,
+            title: "Quest Standalone Performance Profiles",
+            desc: "Polishing frame rendering to ensure butter-smooth gameplay on Quest 2 and 3.",
+            status: "pending"
+        },
+        {
+            id: "4.2",
+            phase: 4,
+            title: "Collision & Physics Thread Optimization",
+            desc: "Optimizing code execution to prevent lag when massive amounts of trash are shifted.",
+            status: "pending"
+        },
+        {
+            id: "4.3",
+            phase: 4,
+            title: "Quality Assurance & Bug Sweeping",
+            desc: "Performing intensive playtesting to clean bugs and resolve locomotion edge-cases.",
+            status: "pending"
+        },
+        {
+            id: "4.4",
+            phase: 4,
+            title: "VR Comfort Configurations",
+            desc: "Setting up user configuration settings for left-handed controls, vignettes, and smooth turns.",
+            status: "pending"
+        },
+        {
+            id: "4.5",
+            phase: 4,
+            title: "Final Build Deployment & Delivery",
+            desc: "Packaging optimized Quest builds (.apk) and compiling complete delivery source codes.",
+            status: "pending"
+        }
+    ];
+
+    // Password Configuration
+    const DEV_PASSKEY = "hoarder777";
+    
+    // =========================================================================
+    // PERSISTENT CLOUD DATABASE CONFIGURATION (KVDB.io Service)
+    // =========================================================================
+    // This is a secure, unique, and public cloud bucket configured for Hoarder Hero.
+    // It enables real-time synchronization so that both you AND your client
+    // see the exact same progress, completely independent of PC restarts or devices!
+    // =========================================================================
+    const BUCKET_ID = "hoarder_hero_db_f0a9b8c7d6e5";
+    const CLOUD_URL = `https://kvdb.io/${BUCKET_ID}/tasks_progress`;
+
+    let isAdminMode = false;
+    let currentActivePhase = 1;
+
+    // =========================================================================
+    // CLOUD DATABASE LIFECYCLE
+    // =========================================================================
+    
+    // 1. LOAD DATA ON PAGE LOAD
+    async function fetchCloudProgress() {
+        const pulse = document.getElementById("dbPulse");
+        const statusText = document.getElementById("dbStatusText");
+
+        try {
+            const response = await fetch(CLOUD_URL);
+            if (response.ok) {
+                const data = await response.json();
+                if (Array.isArray(data) && data.length === tasksData.length) {
+                    tasksData = data;
+                    
+                    pulse.className = "db-pulse";
+                    pulse.style.backgroundColor = "var(--accent-green)";
+                    statusText.innerText = "● Cloud database synchronized successfully.";
+                }
+            } else if (response.status === 404) {
+                // First-time load: Database doesn't exist yet, populate it with our defaults
+                pulse.className = "db-pulse";
+                pulse.style.backgroundColor = "var(--accent-green)";
+                statusText.innerText = "● Database initialized with file defaults.";
+                // Save defaults to the database
+                await saveProgressToCloud();
+            } else {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+        } catch (e) {
+            console.error("Failed to connect to cloud database, falling back to local defaults:", e);
+            pulse.className = "db-pulse";
+            pulse.style.backgroundColor = "#ff5400";
+            statusText.innerText = "⚠️ Cloud synchronization offline. Running in local fail-safe mode.";
+        }
+
+        // Trigger visual recalculation and rendering
+        recalculateProgress();
+    }
+
+    // 2. SAVE DATA TO CLOUD
+    async function saveProgressToCloud() {
+        const pulse = document.getElementById("dbPulse");
+        const statusText = document.getElementById("dbStatusText");
+        const adminBarText = document.getElementById("adminBarStatus");
+
+        if (adminBarText) adminBarText.innerText = "☁️ Synchronizing changes to cloud database...";
+        pulse.className = "db-pulse loading";
+        statusText.innerText = "🔄 Syncing progress to cloud database...";
+
+        try {
+            const response = await fetch(CLOUD_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(tasksData)
+            });
+
+            if (response.ok) {
+                pulse.className = "db-pulse";
+                pulse.style.backgroundColor = "var(--accent-green)";
+                statusText.innerText = "● Cloud database updated successfully in real-time.";
+                if (adminBarText) adminBarText.innerText = "DEVELOPER MODE ACTIVE  |  Cloud database synced.";
+            } else {
+                throw new Error(`Failed to save: ${response.status}`);
+            }
+        } catch (e) {
+            console.error("Cloud save failed:", e);
+            pulse.className = "db-pulse";
+            pulse.style.backgroundColor = "#ff5400";
+            statusText.innerText = "⚠️ Cloud save failed! Running in offline backup mode.";
+            if (adminBarText) adminBarText.innerText = "DEVELOPER MODE ACTIVE  |  ⚠️ Save failed! (Offline)";
+        }
+    }
+
+    // 3. RESET DATABASE
+    async function resetToCodeDefaults() {
+        if (confirm("Are you sure you want to wipe the cloud database and reset all values back to the original default code? This will immediately overwrite the client's view as well!")) {
+            const pulse = document.getElementById("dbPulse");
+            const statusText = document.getElementById("dbStatusText");
+            
+            pulse.className = "db-pulse loading";
+            statusText.innerText = "Wiping database...";
+
+            try {
+                // Delete from cloud
+                await fetch(CLOUD_URL, { method: "DELETE" });
+                alert("Database successfully reset! Reloading page to restore defaults.");
+                window.location.reload();
+            } catch (e) {
+                alert("Reset request failed. Clearing browser memory and reloading.");
+                window.location.reload();
+            }
+        }
+    }
+
+    function recalculateProgress() {
+        const totalTasks = tasksData.length;
+        const completedTasks = tasksData.filter(t => t.status === "completed").length;
+        const mainPct = Math.round((completedTasks / totalTasks) * 100);
+
+        // Update overall circular statistics
+        document.getElementById("mainProgressText").innerText = `${mainPct}%`;
+        document.getElementById("ratioText").innerText = `${completedTasks} of ${totalTasks} Tasks Completed`;
+        
+        // Calculate SVG circle dashoffset
+        const circle = document.getElementById("mainProgressCircle");
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (mainPct / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+
+        // Find and populate active focus task
+        const activeTask = tasksData.find(t => t.status === "active") || {
+            title: "All current tasks completed!",
+            desc: "Scheduled updates pending next phase sprint.",
+            phase: "Complete"
+        };
+        document.getElementById("activeTaskTitle").innerText = activeTask.title;
+        document.getElementById("activeTaskDesc").innerText = activeTask.desc;
+        document.getElementById("activeTaskPhase").innerText = activeTask.phase === "Complete" ? "Finished" : `Phase ${activeTask.phase}`;
+
+        // Calculate phase-specific progress values
+        const phasesCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        const phasesCompleted = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+        tasksData.forEach(task => {
+            phasesCount[task.phase]++;
+            if (task.status === "completed") {
+                phasesCompleted[task.phase]++;
+            }
+        });
+
+        // Set up active phase based on current active task
+        if (activeTask.phase !== "Complete" && !isAdminMode) {
+            currentActivePhase = activeTask.phase;
+        }
+
+        const p1Pct = Math.round((phasesCompleted[1] / phasesCount[1]) * 100);
+        const p2Pct = Math.round((phasesCompleted[2] / phasesCount[2]) * 100);
+        const p3Pct = Math.round((phasesCompleted[3] / phasesCount[3]) * 100);
+        const p4Pct = Math.round((phasesCompleted[4] / phasesCount[4]) * 100);
+
+        document.getElementById("node-1-pct").innerText = `${p1Pct}%`;
+        document.getElementById("node-2-pct").innerText = `${p2Pct}%`;
+        document.getElementById("node-3-pct").innerText = `${p3Pct}%`;
+        document.getElementById("node-4-pct").innerText = `${p4Pct}%`;
+
+        // Update timeline bar progress fill
+        const barFill = document.getElementById("timelineBarFill");
+        let barPercentage = 0;
+        if (p1Pct === 100) barPercentage += 25; else barPercentage += (p1Pct / 100) * 25;
+        if (p1Pct === 100) { if (p2Pct === 100) barPercentage += 25; else barPercentage += (p2Pct / 100) * 25; }
+        if (p2Pct === 100) { if (p3Pct === 100) barPercentage += 25; else barPercentage += (p3Pct / 100) * 25; }
+        if (p3Pct === 100) { if (p4Pct === 100) barPercentage += 25; else barPercentage += (p4Pct / 100) * 25; }
+        barFill.style.width = `${Math.min(95, Math.max(5, barPercentage))}%`;
+
+        // Apply completed and active colors to timeline nodes
+        updateNodeStyles(1, p1Pct);
+        updateNodeStyles(2, p2Pct);
+        updateNodeStyles(3, p3Pct);
+        updateNodeStyles(4, p4Pct);
+
+        // Compute Weeks Elapsed Label
+        let weeksElapsed = 0;
+        weeksElapsed += (p1Pct / 100) * 3;
+        weeksElapsed += (p2Pct / 100) * 5;
+        weeksElapsed += (p3Pct / 100) * 4;
+        weeksElapsed += (p4Pct / 100) * 2;
+        document.getElementById("weeksElapsedText").innerText = `Week ${weeksElapsed.toFixed(1)} of 14 Completed`;
+
+        renderTasks(currentActivePhase);
+        setActiveTabBtn(currentActivePhase);
+    }
+
+    function updateNodeStyles(phaseNum, pct) {
+        const node = document.getElementById(`node-${phaseNum}`);
+        node.classList.remove("completed", "active");
+        if (pct === 100) {
+            node.classList.add("completed");
+        } else if (currentActivePhase === phaseNum) {
+            node.classList.add("active");
+        }
+    }
+
+    function renderTasks(phaseNum) {
+        const container = document.getElementById("taskListContainer");
+        container.innerHTML = "";
+        
+        const phaseTasks = tasksData.filter(t => t.phase === phaseNum);
+
+        phaseTasks.forEach(task => {
+            const item = document.createElement("div");
+            item.className = "task-item";
+
+            let iconClass = "pending";
+            let iconText = "☐";
+            let badgeClass = "pending";
+            let badgeText = "SCHEDULED";
+
+            if (task.status === "completed") {
+                iconClass = "completed";
+                iconText = "✔";
+                badgeClass = "completed";
+                badgeText = "COMPLETED";
+            } else if (task.status === "active") {
+                iconClass = "active";
+                iconText = "✦";
+                badgeClass = "active";
+                badgeText = "IN PROGRESS";
+            }
+
+            // If Admin is logged in, show status dropdown instead of static labels
+            let rightActionHTML = `<div class="task-badge ${badgeClass}">${badgeText}</div>`;
+            if (isAdminMode) {
+                rightActionHTML = `
+                    <select class="admin-select" onchange="updateTaskStatus('${task.id}', this.value)">
+                        <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Scheduled</option>
+                        <option value="active" ${task.status === 'active' ? 'selected' : ''}>Active Focus</option>
+                        <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                `;
+            }
+
+            item.innerHTML = `
+                <div class="task-left">
+                    <div class="task-indicator ${iconClass}">${iconText}</div>
+                    <div class="task-text">
+                        <span class="task-id-badge">Task ${task.id}</span>
+                        <span class="task-label">${task.title}</span>
+                        <span class="task-desc">${task.desc}</span>
+                    </div>
+                </div>
+                ${rightActionHTML}
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function switchPhase(phaseNum) {
+        currentActivePhase = phaseNum;
+        renderTasks(phaseNum);
+        setActiveTabBtn(phaseNum);
+    }
+
+    function setActiveTabBtn(phaseNum) {
+        const buttons = document.querySelectorAll(".tab-btn");
+        buttons.forEach((btn, index) => {
+            if (index === phaseNum - 1) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+    }
+
+    // =========================================================================
+    // DEVELOPER CONSOLE INTERACTIVE ENGINE
+    // =========================================================================
+    function triggerAdminLogin() {
+        if (isAdminMode) {
+            logoutAdmin();
+            return;
+        }
+
+        const password = prompt("Enter developer console special key to unlock admin workspace tools:");
+        if (password === DEV_PASSKEY) {
+            isAdminMode = true;
+            document.getElementById("adminDock").style.display = "block";
+            
+            // Turn "Developer Portal" button into a Logout button visually
+            const devBtn = document.getElementById("devLoginButton");
+            devBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Exit Admin`;
+            devBtn.style.borderColor = "var(--accent-purple)";
+            devBtn.style.color = "var(--accent-purple)";
+
+            recalculateProgress();
+        } else if (password !== null) {
+            alert("Invalid Special Key! Access denied.");
+        }
+    }
+
+    function logoutAdmin() {
+        isAdminMode = false;
+        document.getElementById("adminDock").style.display = "none";
+        
+        // Reset "Developer Portal" button state
+        const devBtn = document.getElementById("devLoginButton");
+        devBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Developer Portal`;
+        devBtn.style.borderColor = "rgba(0, 180, 216, 0.3)";
+        devBtn.style.color = "var(--accent-blue)";
+
+        recalculateProgress();
+    }
+
+    async function updateTaskStatus(taskId, newStatus) {
+        const task = tasksData.find(t => t.id === taskId);
+        if (task) {
+            // Ensure only one task is marked "active" at a time
+            if (newStatus === "active") {
+                tasksData.forEach(t => {
+                    if (t.status === "active") t.status = "pending";
+                });
+            }
+            task.status = newStatus;
+            
+            // Re-render visual changes locally first (fast feel)
+            recalculateProgress();
+
+            // Auto-Save progress to online cloud database instantly
+            await saveProgressToCloud();
+        }
+    }
+
+    // EXPORT index.html (Backup utility)
+    function exportUpdatedCode() {
+        // Stringify the updated tasksData array
+        const tasksString = JSON.stringify(tasksData, null, 8);
+        
+        // Grab entire current DOM source code
+        let sourceCode = document.documentElement.outerHTML;
+
+        // Force reset the isAdminMode to false in the exported code so the client doesn't see the developer view upon loading!
+        sourceCode = sourceCode.replace("let isAdminMode = true;", "let isAdminMode = false;");
+
+        // Extract script portion and replace with updated tasksData array
+        const startRegex = /(let tasksData = \[)([\s\S]*?)(\];\s*\/\/ Password Configuration)/;
+        const replacement = `let tasksData = ${tasksString};\n\n    // Password Configuration`;
+        
+        sourceCode = sourceCode.replace(startRegex, replacement);
+
+        // Prepend DOCTYPE to HTML blob
+        const finalOutput = "<!DOCTYPE html>\n" + sourceCode;
+
+        // Generate file download
+        const blob = new Blob([finalOutput], { type: "text/html" });
+        const downloadLink = document.createElement("a");
+        downloadLink.download = "index.html"; // Saves directly as index.html
+        downloadLink.href = URL.createObjectURL(blob);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        alert("BACKUP EXPORTED SUCCESSFULLY!\n\nThis utility exports a hardcoded backup 'index.html' of your current status array.\n\nYour live dashboard uses real-time cloud sync, so you do NOT need to re-upload to GitHub on every small update!");
+    }
+
+    // Run core engine on boot
+    window.onload = fetchCloudProgress;
+</script>
+
+</body>
+</html>
