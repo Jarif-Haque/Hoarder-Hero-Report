@@ -11,7 +11,7 @@
         "phase": 1,
         "title": "VR Locomotion & Comfort Configurations",
         "desc": "Implementing comfortable teleportation controls and field-of-view comfort screens.",
-        "status": "active"
+        "status": "pending"
     },
     {
         "id": "1.3",
