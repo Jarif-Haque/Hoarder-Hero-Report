@@ -4,42 +4,42 @@
         "phase": 1,
         "title": "Core Mechanics Development",
         "desc": "Setting up basic VR grab mechanics, hand colliders, and throwing physics.",
-        "status": "active"
+        "status": "completed"
     },
     {
         "id": "1.2",
         "phase": 1,
         "title": "VR Locomotion & Comfort Configurations",
         "desc": "Implementing comfortable teleportation controls and field-of-view comfort screens.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "1.3",
         "phase": 1,
         "title": "Trash Disposal Systems",
         "desc": "Creating trash bins and bag systems that process, delete, and score thrown clutter.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "1.4",
         "phase": 1,
         "title": "First Playable Room (Bedroom)",
         "desc": "Assembling a small greybox bedroom to test interactive item scaling in VR.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "1.5",
         "phase": 1,
         "title": "Player Equipment Belt Sockets",
         "desc": "Rigging a virtual utility belt to store player sponges, rollers, and tool assets.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "1.6",
         "phase": 1,
         "title": "Interactive Menu Tablet",
         "desc": "Creating an elegant wearable computer wrist-watch showing current progress.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.1",
