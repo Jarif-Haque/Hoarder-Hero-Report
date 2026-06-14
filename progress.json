@@ -4,7 +4,7 @@
         "phase": 1,
         "title": "Core Mechanics Development",
         "desc": "Setting up basic VR grab mechanics, hand colliders, and throwing physics.",
-        "status": "completed"
+        "status": "pending"
     },
     {
         "id": "1.2",
