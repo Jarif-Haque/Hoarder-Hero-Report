@@ -39,42 +39,42 @@
         "phase": 1,
         "title": "Interactive Menu Tablet",
         "desc": "Creating an elegant wearable computer wrist-watch showing current progress.",
-        "status": "active"
+        "status": "completed"
     },
     {
         "id": "2.1",
         "phase": 2,
         "title": "Interactive Level 1 Construction",
         "desc": "Building a realistic 4-room house layout (Kitchen, Living Room, Bedroom, Bathroom).",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.2",
         "phase": 2,
         "title": "Wall Cleaning & Sponge Scrubbing System",
         "desc": "Enabling physical sponge wipes to erase grimy stains and mold from walls in real-time.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.3",
         "phase": 2,
         "title": "Structural Repair Systems (Hammer tool)",
         "desc": "Developing mechanics to repair broken chair legs and cabinets by hammering them.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.4",
         "phase": 2,
         "title": "Wall Painting Mechanics",
         "desc": "Implementing paint rollers that change wall colors dynamically with clean brushstrokes.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.5",
         "phase": 2,
         "title": "Furnishing & Decoration catalogs",
         "desc": "Creating placement holograms to purchase and position sofas, lamps, and plants.",
-        "status": "pending"
+        "status": "active"
     },
     {
         "id": "2.6",
