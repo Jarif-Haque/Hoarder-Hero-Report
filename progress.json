@@ -81,7 +81,7 @@
         "phase": 2,
         "title": "Progression & Cash Reward Managers",
         "desc": "Implementing career contract progression, tracking levels cleared, and assigning cash.",
-        "status": "pending"
+        "status": "active"
     },
     {
         "id": "2.7",
