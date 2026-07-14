@@ -53,14 +53,14 @@
         "phase": 2,
         "title": "Wall Cleaning & Sponge Scrubbing System",
         "desc": "Enabling physical sponge wipes to erase grimy stains and mold from walls in real-time.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.3",
         "phase": 2,
         "title": "Structural Repair Systems (Hammer tool)",
         "desc": "Developing mechanics to repair broken chair legs and cabinets by hammering them.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.4",
