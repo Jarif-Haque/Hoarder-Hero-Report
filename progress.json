@@ -67,7 +67,7 @@
         "phase": 2,
         "title": "Wall Painting Mechanics",
         "desc": "Implementing paint rollers that change wall colors dynamically with clean brushstrokes.",
-        "status": "pending"
+        "status": "completed"
     },
     {
         "id": "2.5",
