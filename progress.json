@@ -88,14 +88,14 @@
         "phase": 2,
         "title": "Interactive Shop System",
         "desc": "Building an office laptop menu to buy upgraded sponges, rollers, and tool sizes.",
-        "status": "active"
+        "status": "completed"
     },
     {
         "id": "3.1",
         "phase": 3,
         "title": "Level 2 Assembly (Medium 2-Story House)",
         "desc": "Building a suburban house featuring multiple floors and advanced large clutter.",
-        "status": "pending"
+        "status": "active"
     },
     {
         "id": "3.2",
